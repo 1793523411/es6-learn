@@ -1,0 +1,1 @@
+{"version":3,"sources":["babel-node.js"],"names":[],"mappings":"AAAA,IAAI,IAAI,CAAR;AACA,IAAI,IAAI,CAAR;;AAEA,IAAI,IAAI,CAAC,CAAD,EAAG,CAAH,KAAS,IAAE,CAAnB;;AAEA,QAAQ,GAAR,CAAY,CAAZ","file":"res.js","sourcesContent":["let a = 1\r\nlet b = 2\r\n\r\nlet c = (a,b) => a+b\r\n\r\nconsole.log(c)"]}
