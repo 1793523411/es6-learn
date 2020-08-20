@@ -260,3 +260,15 @@
 + Iterator接口与Generator函数，Symbol.iterator方法的最简单实现
 + 遍历器对象的return(),throw(),这两个参数是可选的，return必须返回一个对象，Generator规格决定，throw配合Generator使用，一般的遍历器对象用不到这个方法
 + for···of内部调用是数据结构Symbol.iterato方法
++ 计算后生成的数据结构，有些数据结构实在现有的数据结构的基础上计算生成的，比如es6的数组，map，set都部署了 entries(),keys(),values(),调用后都返回一个遍历器对象
+
+## Generator函数的语法
+
++ Generator函数时ES6提供的一种异步编程解决方案，语法行为与传统函数完全不同，从语法上，可以把它理解成一个状态机，封装了多个内部状态；执行该函数会返回一个遍历对象，所以除了是状态机还是一个遍历对象生成函数，返回的遍历对象可以遍历Generator函数内部的每一个状态；形式上，是一个普通函数，两个特征：function与函数名之间有一个*，函数体内部使用yield语句定义不同的内部状态（yield有产出的意思）
++ Generator函数返回的结果是一个指向内部状态的指针，可以使用next进行遍历，es6没有规定*的位置，所以···，但一般紧跟在function后面
++ yield是一种暂停标志，暂停函数的执行，还等同于提供了手动的惰性求值
++ return语句不具备记忆功能，而yield可以，正常函数只能返回一个值，而Generator返回的是一系列值，如果不使用yield，就变成了一个单纯的暂缓执行函数,只有调用next才会执行，yield只能在Generator中使用，其他地方会报错，forEach参数是一个普通函数，所以不能再次使用，可以改为for循环
++ 可以吧Generator赋值给对象的Symbol.Iterator属性，从而让对象具有遍历器借口
++ yield本身没有返回值，或者总是返回undefined，next方法可以带有一个参数，该采纳数被当做上一yield条语句的返回值,第一次next使用参数无效，v8引擎直接忽略第一次next的参数，语法上第一个next用来启动遍历器，不需要参数
++ for···of循环可以自动遍历Generator函数生成的Iterator对象，且此时不再需要调用next方法
++ Generator函数返回的遍历对象都有一个throw方法，可以再函数体外抛出错误，然后在函数体内捕获
