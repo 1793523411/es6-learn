@@ -295,16 +295,22 @@
 
 ## async 函数
 
-- es6引入async函数使得异步操作更加方便，async函数就是Generator函数的语法糖,*換成async yield換成await
-- async函數對Generator函數的改进体现在以下4点：内置执行器（不用在next），更好地语义，更广的实用性（可以是Promise也可以是可以跟原始类型，这是表示同步）返回值是Promise而不是Iterator，进一步说async函数完全可以看做由多个异步操作包装成的一个Promise对象而await就是内部then的语法糖
-- async函数语法规则总体上来说比较简单，难点是错误处理机制，async函数内部的异步操作执行完，才会执行then方法指定的回调函数
-- 多个await命令后的异步操作如果不存在继发关系，最好让他们同时触发，await只能出现在async函数中，其他地方会报错
-- async的实现原理就是将Generator和自动执行函数包装在一个函数里
-- async相比于Promise和Generator函数更简洁，更符合语义，几乎没有与与一部相关的代码，他将Generator写法中的自动执行函数该在语言层面提供，不暴露给用户，因此代码量最少，如果使用Generator，自动执行器需要用户提供（自己写或引入第三方）
-- async结合await可以并发执行，顺序输出
-- 异步遍历器：前面的Iterator的next方法隐含着一个规定：必须是同步的，对于异步的解决方案是Generator函数里的异步操作返回一个Thunk函数或Promise对象，即value属性是一个Thunk函数或Promise对象，等待以后返回真正的值，而done属性还是同步产生的，有一个提案就是异步操作提供原生的遍历器接口，即value和done这两个属性都是异步产生，这成为异步遍历器
-- 异步遍历器最大的特点是调用next方法返回的是一个Promise对象,同步遍历器接口部署在Symbol.iterator上，同样的异步遍历器部署在Symbol.asyncIterator属性上面，不管什么对象，只有他的Symbol.asyncIterator属性有值，就表示应该对他进行异步遍历
-- for...of用于遍历同步的Iterator接口，新引入的for await...of循环则用于遍历异步的Iterator接口
-- 就像Generator函数返回一个同步遍历器对象一样，异步Generator函数的作用是返回一个异步遍历器对象，语法上就是Generator函数就是async函数与Generator函数的结合,异步遍历器的设计目的之一就是使用Generator函数处理同步操作和异步操作能够使用同一套接口,异步Generator可以同时使用await和yield，可以理解为，await吗，命令将外部操作产生的值输入函数内部，yield命令将函数内部的值输出
-- 异步Generator出现以后，javascript就有了4种函数形式：普通函数，async函数，Generator函数和异步Generator函数，基本上，如果是一系列按照顺序执行的异步操作，比如读取文件写入内容，可以使用async函数，如果是一系列产生相同数据结构的异步操作，比如一行一行读取数据，可以使用异步Generator函数
-- yield*语句也可以与一个异步遍历器一同使用
+- es6 引入 async 函数使得异步操作更加方便，async 函数就是 Generator 函数的语法糖,\*換成 async yield 換成 await
+- async 函數對 Generator 函數的改进体现在以下 4 点：内置执行器（不用在 next），更好地语义，更广的实用性（可以是 Promise 也可以是可以跟原始类型，这是表示同步）返回值是 Promise 而不是 Iterator，进一步说 async 函数完全可以看做由多个异步操作包装成的一个 Promise 对象而 await 就是内部 then 的语法糖
+- async 函数语法规则总体上来说比较简单，难点是错误处理机制，async 函数内部的异步操作执行完，才会执行 then 方法指定的回调函数
+- 多个 await 命令后的异步操作如果不存在继发关系，最好让他们同时触发，await 只能出现在 async 函数中，其他地方会报错
+- async 的实现原理就是将 Generator 和自动执行函数包装在一个函数里
+- async 相比于 Promise 和 Generator 函数更简洁，更符合语义，几乎没有与与一部相关的代码，他将 Generator 写法中的自动执行函数该在语言层面提供，不暴露给用户，因此代码量最少，如果使用 Generator，自动执行器需要用户提供（自己写或引入第三方）
+- async 结合 await 可以并发执行，顺序输出
+- 异步遍历器：前面的 Iterator 的 next 方法隐含着一个规定：必须是同步的，对于异步的解决方案是 Generator 函数里的异步操作返回一个 Thunk 函数或 Promise 对象，即 value 属性是一个 Thunk 函数或 Promise 对象，等待以后返回真正的值，而 done 属性还是同步产生的，有一个提案就是异步操作提供原生的遍历器接口，即 value 和 done 这两个属性都是异步产生，这成为异步遍历器
+- 异步遍历器最大的特点是调用 next 方法返回的是一个 Promise 对象,同步遍历器接口部署在 Symbol.iterator 上，同样的异步遍历器部署在 Symbol.asyncIterator 属性上面，不管什么对象，只有他的 Symbol.asyncIterator 属性有值，就表示应该对他进行异步遍历
+- for...of 用于遍历同步的 Iterator 接口，新引入的 for await...of 循环则用于遍历异步的 Iterator 接口
+- 就像 Generator 函数返回一个同步遍历器对象一样，异步 Generator 函数的作用是返回一个异步遍历器对象，语法上就是 Generator 函数就是 async 函数与 Generator 函数的结合,异步遍历器的设计目的之一就是使用 Generator 函数处理同步操作和异步操作能够使用同一套接口,异步 Generator 可以同时使用 await 和 yield，可以理解为，await 吗，命令将外部操作产生的值输入函数内部，yield 命令将函数内部的值输出
+- 异步 Generator 出现以后，javascript 就有了 4 种函数形式：普通函数，async 函数，Generator 函数和异步 Generator 函数，基本上，如果是一系列按照顺序执行的异步操作，比如读取文件写入内容，可以使用 async 函数，如果是一系列产生相同数据结构的异步操作，比如一行一行读取数据，可以使用异步 Generator 函数
+- 普通的 async 函数自带执行器，返回一个 Promise 对象，而异步 Generator 返回一个异步 Iterator，通过 await for···of 执行，或自己编写执行器，两者都是对异步操作的封装
+- `yield*`语句也可以与一个异步遍历器一同使用，`for await···of`循环会展开 yield\*
+- **异步 Generator 函数这一块第一遍看有点点迷**
+
+## Class 基本语法
+
+-
