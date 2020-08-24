@@ -395,5 +395,29 @@
 
 ## 读懂 ECMAScript 规格
 
-- 规格是解决问题的最后一招，这对于javascript很有必要，因为它的使用场景复杂，语法规格不统一，例外很多，各种环境的行为也不一致，导致奇怪的语法问题层出不穷，任何语法书都不可能囊括所有情况，查看规格不失为一种解决语法问题最可靠，最权威的终极方法
-- 
+- 规格是解决问题的最后一招，这对于 javascript 很有必要，因为它的使用场景复杂，语法规格不统一，例外很多，各种环境的行为也不一致，导致奇怪的语法问题层出不穷，任何语法书都不可能囊括所有情况，查看规格不失为一种解决语法问题最可靠，最权威的终极方法
+- 有点那啥，就不写了: )
+
+## ArrayBuffer
+
++ ArrayBuffer对象，TypedArray视图和DataView视图是javascript操作二进制数据的一个接口，这些对象早就存在，属于独立的规格，es6将他们纳入了ECMAScript规格，并且添加了新的方法，他们都以数组的语法处理二进制数据，所以统称为二进制数组，这个接口的原始设计目的与WebGL项目有关，WebGL就是浏览器与显卡之间的通信接口
++ 二进制数组很想c语言数组，允许开发者以数组的形式直接操作内存，大大增加了javascript处理二进制数据能力，使开发者有可能通过javascript与操作系统的原生接口进行二进制数据
++ ArrayBuffer对象，代表内存中的一段二进制数据，可以通过视图操作，视图部署了数组接口，这意味着可以用数组操作内存，TypedArray视图，包括九种类型的视图，DataView可以自定义复合格式的视图，还可以自定义字节序
++ 二进制数组并不是真正的数组，而是类似数组的对象，很多浏览器操作的API用到了二进制数组操作二进制，比如canvas，WbSockets，Fetch API XMLHttpRequest，File API
++ ArrayBuffer实例的byteLength属性返回所分配的内存区域的字节长度，除了slic，ArrayBuffer对象不提供任何直接读写内存的方法，只允许在其上建立视图，然后通过视图读写,ArrayBuffer提供一个静态方法isView返回一个布尔值，表示参数是否为ArrayBuffer视图实例
++ TypedArray视图一共包括九种数据类型，每一种视图都是一种构造函数，9个构造函数生成数组，统称为TypedArray视图,**他们很像普通数组，所有数组的方法都能在其上使用**，与普通数组的不同：默认初始化为0.所有成员都是同一种类型，所有成员连续，不会有空位，typedArray数组只是一层视图，本身不存储数据，他的数据都存在底层ArrayBuffer对象中，要获取底层对象必须使用buffer属性
++ 视图的构造函数接收三个参数，底层ArrayBuffer对象，开始字节序号，视图包含数据个数，byteOffset必须与与所要建立的数据类型一致，否则会报错,如果想从任意字节开始解读ArrayBuffer对象，必须使用DataView试图因为TypedArray只提供了9种任意格式的解读格式
++ 试图还可以不通过ArrayBuffer对象，而直接分配内存生成，TypedArray数组的构造函数接收另一个TypedArray实例作为参数，此时生成的新数组只是复制了参数数组的值，对应的底层内存是不一样的新的数组会开辟一段内存存储数据，不在原数组的内存之上建立视图,TypedArray的参数也可以是一个普通数组，然后直接生成TypedArray实例，这时会开辟内存空间，不会再原数组的内存上建立视图，TypedArray数组也可以转回普通数组 Array.prototype.slice.call(TypedArray)
++ TypedArray数组相对于普通数组没有concat方法,TypedArray与普通数组一样部署了Iterator接口，可以遍历
++ 字节序指的是数值在内存中的表示方式
++ ![](img/搜狗截图20200824164800.png)
++ ![](img/搜狗截图20200824164829.png)
++ ![](img/搜狗截图20200824164858.png)
++ 每一种视图的构造函数都有一个BYTES_PER_ELEMENT属性，表示这种数据类型占据的字节数,在TypedArray实例上也能获取到，即有TypedArray.prototype.BYTES_PER_ELEMENT
++ ArrayBuffer与字符串的互相转换，转换前提，字符串的编码方式是确定的
++ 溢出规则：抛弃溢出位，然后按照视图类型进行解释，正数溢出，负数溢出
++ 定义在原型上的方法：buffer,byteLength,byteOffset,length,set,subarray,slice,of,from
++ DataView视图提供更多的曹祖选项，且支持设定字节序，TypedArray视图用于向网卡，声卡之类的本机设备传送数据，所以使用本机的字节序即可，DataView视图用于处理网络设备传来的数据，所以大端字节序和·小端字节序可以自行设定
++ 二进制数组应用：Ajax，Canvas，WebSocket，Fetch API，File API
++ ShareArrayBuffer，javascript是单线程的，web worker引入了多线程，主线程用来与用户互动，worker线程用来承担计算任务，每个线程的数据都是隔离的，通过postMessage()通信，线程之间数据通信，当数据量比较大时，效率较低，这是可以留出一块内存区域，有主线程和worker线程共享，两方面都可以读写，大大提高读写效率，协作起来也比较简单，es2017引入ShareArrayBuffer，，允许worker线程与主线程共享同一块内存，它的api与ArrayBuffer一模一样，唯一区别是后者无法共享
++ Atomics对象：多线程共享内存最大问题就是防止两个线程同时修修改某个地址，ShareArrayBuffer，提供的Atomics对象，保证了所共享的内存的操作都是基于原子性的，并且可以在所有线程内同步，Atomics.store(),Atomics.load(),分别写数据和读数据，Atomics还提供了一些运算方法，防止数据被改写
